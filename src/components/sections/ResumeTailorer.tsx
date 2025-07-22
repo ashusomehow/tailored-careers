@@ -48,7 +48,7 @@ const ResumeTailorer = () => {
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
+        <div className="grid lg:grid-cols-2 gap-8 min-h-[70vh]">
           {/* Left Panel - Resume Preview */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -62,10 +62,10 @@ const ResumeTailorer = () => {
                   Resume Preview
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="h-[calc(100%-5rem)]">
                 {!resumeUploaded ? (
                   <div 
-                    className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-12 text-center cursor-pointer hover:border-primary/50 transition-colors"
+                    className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-12 text-center cursor-pointer hover:border-primary/50 transition-colors h-full flex flex-col justify-center"
                     onClick={() => setResumeUploaded(true)}
                   >
                     <Upload className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
@@ -73,8 +73,8 @@ const ResumeTailorer = () => {
                     <p className="text-muted-foreground">PDF, DOC, or DOCX files accepted</p>
                   </div>
                 ) : (
-                  <div className="bg-muted/50 rounded-lg p-6 min-h-[500px]">
-                    <div className="bg-white rounded shadow-sm p-6 mb-4">
+                  <div className="bg-muted/50 rounded-lg p-6 h-full overflow-y-auto">
+                    <div className="bg-white dark:bg-card rounded shadow-sm p-6 mb-4">
                       <h3 className="text-xl font-bold mb-2">Sarah Johnson</h3>
                       <p className="text-muted-foreground mb-4">Frontend Developer</p>
                       
@@ -122,7 +122,7 @@ const ResumeTailorer = () => {
             </Card>
           </motion.div>
 
-          {/* Right Panel - Controls and Insights */}
+          {/* Right Panel - Job Description and Insights */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -130,14 +130,14 @@ const ResumeTailorer = () => {
             className="space-y-6"
           >
             {/* Upload Job Description */}
-            <Card>
+            <Card className="h-[60%]">
               <CardHeader>
                 <CardTitle>Job Description</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="h-[calc(100%-5rem)]">
                 {!jobDescUploaded ? (
                   <div 
-                    className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center cursor-pointer hover:border-primary/50 transition-colors"
+                    className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center cursor-pointer hover:border-primary/50 transition-colors h-full flex flex-col justify-center"
                     onClick={() => setJobDescUploaded(true)}
                   >
                     <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
@@ -145,20 +145,45 @@ const ResumeTailorer = () => {
                     <p className="text-sm text-muted-foreground">PDF or text format</p>
                   </div>
                 ) : (
-                  <div className="bg-muted/50 rounded p-4">
-                    <p className="text-sm text-muted-foreground mb-2">Senior Frontend Developer at TechStart</p>
-                    <p className="text-sm">We're looking for an experienced React developer with TypeScript, Docker, and AWS experience...</p>
+                  <div className="bg-muted/50 rounded p-4 h-full overflow-y-auto">
+                    <div className="space-y-3 text-sm">
+                      <div>
+                        <h4 className="font-semibold text-base mb-2">Senior Frontend Developer at TechStart</h4>
+                        <p className="text-muted-foreground mb-3">Location: San Francisco, CA</p>
+                      </div>
+                      
+                      <div>
+                        <h5 className="font-medium mb-1">Job Description:</h5>
+                        <p className="text-muted-foreground">
+                          We're looking for an experienced React developer with TypeScript, Docker, and AWS experience. 
+                          You'll be working on our next-generation web platform, collaborating with cross-functional teams 
+                          to deliver exceptional user experiences.
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <h5 className="font-medium mb-1">Required Skills:</h5>
+                        <p className="text-muted-foreground">
+                          • 3+ years React development experience<br/>
+                          • Strong TypeScript knowledge<br/>
+                          • Experience with Docker containerization<br/>
+                          • AWS cloud services familiarity<br/>
+                          • GraphQL and REST API integration<br/>
+                          • Agile/Scrum methodology
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 )}
               </CardContent>
             </Card>
 
-            {/* Action Buttons */}
-            <div className="flex gap-4">
+            {/* Action Button */}
+            <div className="mt-4">
               <Button 
                 onClick={handleTailorResume}
                 disabled={!resumeUploaded || !jobDescUploaded || isTailoring}
-                className="flex-1"
+                className="w-full"
                 size="lg"
               >
                 {isTailoring ? (
@@ -174,116 +199,96 @@ const ResumeTailorer = () => {
                 )}
               </Button>
             </div>
-
-            {/* Match Score */}
-            {isTailored && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      Match Score
-                      <span className="text-2xl font-bold text-primary">78%</span>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <Progress value={78} className="mb-4" />
-                    <p className="text-sm text-muted-foreground">
-                      Your resume matches most requirements. Add missing keywords to improve your score.
-                    </p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            )}
-
-            {/* Keywords Analysis */}
-            {isTailored && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Keywords Analysis</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div>
-                      <h4 className="font-medium mb-2 text-success">Matching Keywords</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {matchingKeywords.map((keyword) => (
-                          <Badge key={keyword} className="bg-success/10 text-success border-success/20">
-                            {keyword}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <h4 className="font-medium mb-2 text-warning">Missing Keywords</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {missingKeywords.map((keyword) => (
-                          <Badge key={keyword} className="bg-warning/10 text-warning border-warning/20">
-                            {keyword}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            )}
-
-            {/* AI Suggestions */}
-            {isTailored && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-              >
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Sparkles className="w-5 h-5 text-primary" />
-                      AI Suggestions
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      {aiSuggestions.map((suggestion, index) => (
-                        <div key={index} className="p-3 bg-primary-light/50 rounded-lg text-sm">
-                          {suggestion}
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            )}
-
-            {/* Download Actions */}
-            {isTailored && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.6 }}
-                className="flex gap-4"
-              >
-                <Button className="flex-1" size="lg">
-                  <Download className="w-4 h-4 mr-2" />
-                  Download Tailored Resume
-                </Button>
-                <Button variant="outline" size="lg">
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copy Suggestions
-                </Button>
-              </motion.div>
-            )}
           </motion.div>
         </div>
+
+        {/* Bottom Section - Results */}
+        {isTailored && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="mt-12 grid lg:grid-cols-3 gap-6"
+          >
+
+            {/* Match Score */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  Match Score
+                  <span className="text-2xl font-bold text-primary">78%</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Progress value={78} className="mb-4" />
+                <p className="text-sm text-muted-foreground">
+                  Your resume matches most requirements. Add missing keywords to improve your score.
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Keywords Analysis */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Keywords Analysis</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <h4 className="font-medium mb-2 text-success">Matching Keywords</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {matchingKeywords.map((keyword) => (
+                      <Badge key={keyword} className="bg-success/10 text-success border-success/20">
+                        {keyword}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 className="font-medium mb-2 text-warning">Missing Keywords</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {missingKeywords.map((keyword) => (
+                      <Badge key={keyword} className="bg-warning/10 text-warning border-warning/20">
+                        {keyword}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* AI Suggestions */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-primary" />
+                  AI Suggestions
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {aiSuggestions.map((suggestion, index) => (
+                    <div key={index} className="p-3 bg-primary-light/50 rounded-lg text-sm">
+                      {suggestion}
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Download Actions */}
+                <div className="flex gap-3 mt-6">
+                  <Button className="flex-1" size="sm">
+                    <Download className="w-4 h-4 mr-2" />
+                    Download Tailored Resume
+                  </Button>
+                  <Button variant="outline" size="sm">
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copy Suggestions
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
       </div>
     </section>
   );

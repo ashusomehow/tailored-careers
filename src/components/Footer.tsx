@@ -15,19 +15,19 @@ const Footer = () => {
             <div className="w-6 h-6 bg-gradient-primary rounded flex items-center justify-center">
               <span className="text-white font-bold text-xs">H</span>
             </div>
-            <span className="font-semibold">Hireable</span>
+            <span className="font-semibold">Hyrd</span>
           </div>
           
           <div className="flex items-center space-x-6 text-sm">
             <a 
-              href="mailto:feedback@hireable.app" 
+              href="mailto:feedback@hyrd.app" 
               className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
             >
               <Mail className="w-4 h-4" />
               Feedback
             </a>
             <a 
-              href="mailto:bugs@hireable.app" 
+              href="mailto:bugs@hyrd.app" 
               className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
             >
               <Bug className="w-4 h-4" />
@@ -36,7 +36,7 @@ const Footer = () => {
           </div>
           
           <div className="text-sm text-muted-foreground">
-            © 2024 Hireable. All rights reserved.
+            © 2024 Hyrd. All rights reserved.
           </div>
         </motion.div>
       </div>
