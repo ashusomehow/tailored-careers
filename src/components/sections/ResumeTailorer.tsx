@@ -1,16 +1,27 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Upload, FileText, Target, Download, Copy, Sparkles } from 'lucide-react';
+import { Upload, FileText, Target, Download, Copy, Sparkles, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 
-const ResumeTailorer = () => {
+const ResumeTailor = () => {
   const [resumeUploaded, setResumeUploaded] = useState(false);
+  const [selectedResume, setSelectedResume] = useState('');
+  const [jobDescText, setJobDescText] = useState('');
   const [jobDescUploaded, setJobDescUploaded] = useState(false);
   const [isTailoring, setIsTailoring] = useState(false);
   const [isTailored, setIsTailored] = useState(false);
+
+  const savedResumes = [
+    'Software_Engineer_v1.pdf',
+    'Frontend_Developer_v2.pdf',
+    'Full_Stack_Developer_v1.pdf',
+    'React_Developer_Specialized.pdf'
+  ];
 
   const handleTailorResume = async () => {
     setIsTailoring(true);
@@ -41,7 +52,7 @@ const ResumeTailorer = () => {
         >
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Tailor Your Resume with{' '}
-            <span className="bg-gradient-primary bg-clip-text text-transparent">AI</span>
+            <span className="text-primary">AI</span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Upload your resume and job description to get personalized insights and improvements.
@@ -49,249 +60,341 @@ const ResumeTailorer = () => {
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-8 min-h-[70vh]">
-          {/* Left Panel - Resume Preview */}
+          {/* Left Panel - Resume Upload & Selection */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
+            className="space-y-6"
           >
-            <Card className="h-full">
+            {/* Resume Upload & Dropdown */}
+            <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <FileText className="w-5 h-5" />
-                  Resume Preview
+                  Resume Selection
                 </CardTitle>
               </CardHeader>
-              <CardContent className="h-[calc(100%-5rem)]">
-                {!resumeUploaded ? (
-                  <div 
-                    className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-12 text-center cursor-pointer hover:border-primary/50 transition-colors h-full flex flex-col justify-center"
-                    onClick={() => setResumeUploaded(true)}
-                  >
-                    <Upload className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                    <p className="text-lg font-medium mb-2">Upload Your Resume</p>
-                    <p className="text-muted-foreground">PDF, DOC, or DOCX files accepted</p>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Upload Resume */}
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Upload New Resume</label>
+                    <motion.div 
+                      className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center cursor-pointer hover:border-primary/50 transition-all duration-200"
+                      onClick={() => setResumeUploaded(true)}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
+                      <p className="text-sm font-medium mb-1">Upload Resume</p>
+                      <p className="text-xs text-muted-foreground">PDF, DOC, DOCX</p>
+                    </motion.div>
                   </div>
-                ) : (
-                  <div className="bg-muted/50 rounded-lg p-6 h-full overflow-y-auto">
-                    <div className="bg-white dark:bg-card rounded shadow-sm p-6 mb-4">
-                      <h3 className="text-xl font-bold mb-2">Sarah Johnson</h3>
-                      <p className="text-muted-foreground mb-4">Frontend Developer</p>
-                      
-                      <div className="space-y-4">
-                        <div>
-                          <h4 className="font-semibold mb-2">Experience</h4>
-                          <div className="text-sm space-y-2">
+                  
+                  {/* Select Existing Resume */}
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Or Select Existing</label>
+                    <Select value={selectedResume} onValueChange={setSelectedResume}>
+                      <SelectTrigger className="h-[120px] flex flex-col items-start justify-start pt-4">
+                        <SelectValue placeholder="Choose saved resume..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {savedResumes.map((resume) => (
+                          <SelectItem key={resume} value={resume}>
+                            {resume}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Resume Preview */}
+            {(resumeUploaded || selectedResume) && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Resume Preview</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="bg-muted/50 rounded-lg p-4 max-h-80 overflow-y-auto">
+                      <div className="bg-background rounded shadow-sm p-4">
+                        <h3 className="text-lg font-bold mb-1">Sarah Johnson</h3>
+                        <p className="text-muted-foreground mb-3">Frontend Developer</p>
+                        
+                        <div className="space-y-3 text-sm">
+                          <div>
+                            <h4 className="font-semibold mb-1">Experience</h4>
                             <div>
                               <p className="font-medium">Software Engineer - TechCorp</p>
-                              <p className="text-muted-foreground">2022 - Present</p>
-                              <p>Built responsive web applications using React and TypeScript</p>
+                              <p className="text-muted-foreground text-xs">2022 - Present</p>
+                            </div>
+                          </div>
+                          
+                          <div>
+                            <h4 className="font-semibold mb-1">Skills</h4>
+                            <div className="flex flex-wrap gap-1">
+                              {['React', 'TypeScript', 'Node.js'].map((skill) => (
+                                <Badge key={skill} variant="secondary" className="text-xs">{skill}</Badge>
+                              ))}
                             </div>
                           </div>
                         </div>
                         
-                        <div>
-                          <h4 className="font-semibold mb-2">Skills</h4>
-                          <div className="flex flex-wrap gap-2">
-                            {['React', 'TypeScript', 'Node.js', 'CSS', 'Git'].map((skill) => (
-                              <Badge key={skill} variant="secondary">{skill}</Badge>
-                            ))}
-                          </div>
-                        </div>
+                        {isTailored && (
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="mt-3 text-center"
+                          >
+                            <Badge className="bg-success text-success-foreground">
+                              <Sparkles className="w-3 h-3 mr-1" />
+                              AI Enhanced
+                            </Badge>
+                          </motion.div>
+                        )}
                       </div>
                     </div>
-                    
-                    {isTailored && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="text-center"
-                      >
-                        <Badge className="bg-success text-success-foreground mb-2">
-                          <Sparkles className="w-4 h-4 mr-1" />
-                          AI Enhanced
-                        </Badge>
-                        <p className="text-sm text-muted-foreground">
-                          Your resume has been optimized for this position
-                        </p>
-                      </motion.div>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
           </motion.div>
 
-          {/* Right Panel - Job Description and Insights */}
+          {/* Right Panel - Job Description */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="space-y-6"
           >
-            {/* Upload Job Description */}
-            <Card className="h-[60%]">
+            <Card className="h-full">
               <CardHeader>
                 <CardTitle>Job Description</CardTitle>
               </CardHeader>
-              <CardContent className="h-[calc(100%-5rem)]">
-                {!jobDescUploaded ? (
-                  <div 
-                    className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center cursor-pointer hover:border-primary/50 transition-colors h-full flex flex-col justify-center"
-                    onClick={() => setJobDescUploaded(true)}
+              <CardContent className="h-[calc(100%-5rem)] space-y-4">
+                {/* Text Input */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Paste Job Description</label>
+                  <Textarea
+                    placeholder="Paste the job description here..."
+                    value={jobDescText}
+                    onChange={(e) => {
+                      setJobDescText(e.target.value);
+                      setJobDescUploaded(e.target.value.length > 0);
+                    }}
+                    className="min-h-[200px] resize-none"
+                  />
+                </div>
+                
+                {/* Upload Button */}
+                <div className="text-center">
+                  <p className="text-sm text-muted-foreground mb-2">or</p>
+                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setJobDescUploaded(true)}
+                      className="w-full"
+                    >
+                      <Upload className="w-4 h-4 mr-2" />
+                      Upload JD PDF
+                    </Button>
+                  </motion.div>
+                </div>
+
+                {/* Job Description Preview */}
+                {jobDescUploaded && jobDescText && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-muted/50 rounded p-3 text-sm max-h-40 overflow-y-auto"
                   >
-                    <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                    <p className="font-medium mb-1">Upload or paste job description</p>
-                    <p className="text-sm text-muted-foreground">PDF or text format</p>
-                  </div>
-                ) : (
-                  <div className="bg-muted/50 rounded p-4 h-full overflow-y-auto">
-                    <div className="space-y-3 text-sm">
-                      <div>
-                        <h4 className="font-semibold text-base mb-2">Senior Frontend Developer at TechStart</h4>
-                        <p className="text-muted-foreground mb-3">Location: San Francisco, CA</p>
-                      </div>
-                      
-                      <div>
-                        <h5 className="font-medium mb-1">Job Description:</h5>
-                        <p className="text-muted-foreground">
-                          We're looking for an experienced React developer with TypeScript, Docker, and AWS experience. 
-                          You'll be working on our next-generation web platform, collaborating with cross-functional teams 
-                          to deliver exceptional user experiences.
-                        </p>
-                      </div>
-                      
-                      <div>
-                        <h5 className="font-medium mb-1">Required Skills:</h5>
-                        <p className="text-muted-foreground">
-                          • 3+ years React development experience<br/>
-                          • Strong TypeScript knowledge<br/>
-                          • Experience with Docker containerization<br/>
-                          • AWS cloud services familiarity<br/>
-                          • GraphQL and REST API integration<br/>
-                          • Agile/Scrum methodology
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                    <h4 className="font-semibold mb-2">Preview:</h4>
+                    <p className="text-muted-foreground">{jobDescText.substring(0, 200)}...</p>
+                  </motion.div>
                 )}
+
+                {/* Action Button */}
+                <div className="mt-auto pt-4">
+                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                    <Button 
+                      onClick={handleTailorResume}
+                      disabled={!(resumeUploaded || selectedResume) || !jobDescUploaded || isTailoring}
+                      className="w-full"
+                      size="lg"
+                    >
+                      {isTailoring ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary-foreground border-t-transparent mr-2" />
+                          Analyzing...
+                        </>
+                      ) : (
+                        <>
+                          <Target className="w-4 h-4 mr-2" />
+                          Tailor Resume
+                        </>
+                      )}
+                    </Button>
+                  </motion.div>
+                </div>
               </CardContent>
             </Card>
-
-            {/* Action Button */}
-            <div className="mt-4">
-              <Button 
-                onClick={handleTailorResume}
-                disabled={!resumeUploaded || !jobDescUploaded || isTailoring}
-                className="w-full"
-                size="lg"
-              >
-                {isTailoring ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
-                    Analyzing...
-                  </>
-                ) : (
-                  <>
-                    <Target className="w-4 h-4 mr-2" />
-                    Tailor Resume
-                  </>
-                )}
-              </Button>
-            </div>
           </motion.div>
         </div>
 
-        {/* Bottom Section - Results */}
+        {/* Insights Section - Below the inputs */}
         {isTailored && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-12 grid lg:grid-cols-3 gap-6"
+            className="mt-12"
           >
+            <h2 className="text-2xl font-bold text-center mb-8">Tailoring Insights</h2>
+            <div className="grid lg:grid-cols-3 gap-6">
+              {/* Match Score */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+              >
+                <Card className="text-center">
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-center gap-2">
+                      Match Score
+                      <motion.span 
+                        className="text-3xl font-bold text-primary"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", stiffness: 200, delay: 0.3 }}
+                      >
+                        78%
+                      </motion.span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <Progress value={78} className="mb-4" />
+                    <p className="text-sm text-muted-foreground">
+                      Your resume matches most requirements. Add missing keywords to improve your score.
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
 
-            {/* Match Score */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  Match Score
-                  <span className="text-2xl font-bold text-primary">78%</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Progress value={78} className="mb-4" />
-                <p className="text-sm text-muted-foreground">
-                  Your resume matches most requirements. Add missing keywords to improve your score.
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Keywords Analysis */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Keywords Analysis</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <h4 className="font-medium mb-2 text-success">Matching Keywords</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {matchingKeywords.map((keyword) => (
-                      <Badge key={keyword} className="bg-success/10 text-success border-success/20">
-                        {keyword}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-                
-                <div>
-                  <h4 className="font-medium mb-2 text-warning">Missing Keywords</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {missingKeywords.map((keyword) => (
-                      <Badge key={keyword} className="bg-warning/10 text-warning border-warning/20">
-                        {keyword}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* AI Suggestions */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-primary" />
-                  AI Suggestions
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {aiSuggestions.map((suggestion, index) => (
-                    <div key={index} className="p-3 bg-primary-light/50 rounded-lg text-sm">
-                      {suggestion}
+              {/* Keywords Analysis */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4, delay: 0.2 }}
+              >
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Keywords Analysis</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <h4 className="font-medium mb-2 text-success">Matching Keywords</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {matchingKeywords.map((keyword, index) => (
+                          <motion.div
+                            key={keyword}
+                            initial={{ opacity: 0, scale: 0 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: 0.5 + index * 0.1 }}
+                          >
+                            <Badge className="bg-success/10 text-success border-success/20">
+                              {keyword}
+                            </Badge>
+                          </motion.div>
+                        ))}
+                      </div>
                     </div>
-                  ))}
-                </div>
-                
-                {/* Download Actions */}
-                <div className="flex gap-3 mt-6">
-                  <Button className="flex-1" size="sm">
-                    <Download className="w-4 h-4 mr-2" />
-                    Download Tailored Resume
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    <Copy className="w-4 h-4 mr-2" />
-                    Copy Suggestions
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+                    
+                    <div>
+                      <h4 className="font-medium mb-2 text-warning">Missing Keywords</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {missingKeywords.map((keyword, index) => (
+                          <motion.div
+                            key={keyword}
+                            initial={{ opacity: 0, scale: 0 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: 0.8 + index * 0.1 }}
+                          >
+                            <Badge className="bg-warning/10 text-warning border-warning/20">
+                              {keyword}
+                            </Badge>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              {/* AI Suggestions */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4, delay: 0.3 }}
+              >
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Sparkles className="w-5 h-5 text-primary" />
+                      AI Suggestions
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {aiSuggestions.map((suggestion, index) => (
+                        <motion.div 
+                          key={index} 
+                          className="p-3 bg-primary/5 rounded-lg text-sm border border-primary/10"
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 1.0 + index * 0.1 }}
+                        >
+                          {suggestion}
+                        </motion.div>
+                      ))}
+                    </div>
+                    
+                    {/* Download Actions */}
+                    <div className="flex gap-3 mt-6">
+                      <motion.div 
+                        className="flex-1"
+                        whileHover={{ scale: 1.05 }} 
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Button className="w-full" size="sm">
+                          <Download className="w-4 h-4 mr-2" />
+                          Download
+                        </Button>
+                      </motion.div>
+                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Button variant="outline" size="sm">
+                          <Copy className="w-4 h-4 mr-2" />
+                          Copy
+                        </Button>
+                      </motion.div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </div>
           </motion.div>
         )}
+
       </div>
     </section>
   );
 };
 
-export default ResumeTailorer;
+export default ResumeTailor;

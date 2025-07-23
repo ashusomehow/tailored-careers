@@ -12,8 +12,8 @@ const Footer = () => {
           className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0"
         >
           <div className="flex items-center space-x-2">
-            <div className="w-6 h-6 bg-gradient-primary rounded flex items-center justify-center">
-              <span className="text-white font-bold text-xs">H</span>
+            <div className="w-6 h-6 bg-primary rounded flex items-center justify-center">
+              <span className="text-primary-foreground font-bold text-xs">H</span>
             </div>
             <span className="font-semibold">Hyrd</span>
           </div>
@@ -35,9 +35,6 @@ const Footer = () => {
             </a>
           </div>
           
-          <div className="text-sm text-muted-foreground">
-            © 2024 Hyrd. All rights reserved.
-          </div>
         </motion.div>
       </div>
     </footer>

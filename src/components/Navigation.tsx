@@ -16,9 +16,9 @@ const Navigation = ({ activeSection, onSectionChange }: NavigationProps) => {
   const navigate = useNavigate();
   
   const sections = [
-    { id: 'tailorer', label: 'Resume Tailorer', route: '/resume-tailorer' },
+    { id: 'tailorer', label: 'Resume Tailor', route: '/resume-tailorer' },
     { id: 'builder', label: 'Resume Builder', route: '/resume-builder' },
-    { id: 'tracker', label: 'Application Tracker', route: '/application-tracker' },
+    { id: 'tracker', label: 'Job Application Tracker', route: '/application-tracker' },
   ];
 
   const handleNavigation = (section: any) => {
@@ -42,23 +42,38 @@ const Navigation = ({ activeSection, onSectionChange }: NavigationProps) => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
+          {/* Logo - Far Left */}
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">H</span>
-            </div>
-            <span className="text-xl font-bold cursor-pointer" onClick={() => navigate('/')}>Hyrd</span>
+            <motion.div 
+              className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <span className="text-primary-foreground font-bold text-sm">H</span>
+            </motion.div>
+            <motion.span 
+              className="text-xl font-bold cursor-pointer" 
+              onClick={() => navigate('/')}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Hyrd
+            </motion.span>
           </div>
           
+          {/* Navigation - Center */}
           <div className="flex space-x-1 bg-muted p-1 rounded-lg">
             {sections.map((section) => (
-              <button
+              <motion.button
                 key={section.id}
                 onClick={() => handleNavigation(section)}
-                className={`relative px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                className={`relative px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
                   activeSection === section.id
                     ? 'text-primary-foreground'
                     : 'text-muted-foreground hover:text-foreground'
                 }`}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 {activeSection === section.id && (
                   <motion.div
@@ -69,10 +84,11 @@ const Navigation = ({ activeSection, onSectionChange }: NavigationProps) => {
                   />
                 )}
                 <span className="relative z-10">{section.label}</span>
-              </button>
+              </motion.button>
             ))}
           </div>
 
+          {/* Auth Buttons - Far Right */}
           <div className="flex items-center space-x-2">
             <ThemeToggle />
             {user ? (
@@ -80,32 +96,38 @@ const Navigation = ({ activeSection, onSectionChange }: NavigationProps) => {
                 <span className="text-sm text-muted-foreground">
                   {user.email?.split('@')[0]}
                 </span>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={handleSignOut}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <LogOut className="w-4 h-4 mr-1" />
-                  Sign Out
-                </Button>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={handleSignOut}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    <LogOut className="w-4 h-4 mr-1" />
+                    Sign Out
+                  </Button>
+                </motion.div>
               </div>
             ) : (
               <div className="flex items-center space-x-2">
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => navigate('/auth')}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  Sign In
-                </Button>
-                <Button 
-                  size="sm"
-                  onClick={() => navigate('/auth')}
-                >
-                  Get Started
-                </Button>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => navigate('/auth')}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    Sign In
+                  </Button>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button 
+                    size="sm"
+                    onClick={() => navigate('/auth')}
+                  >
+                    Get Started
+                  </Button>
+                </motion.div>
               </div>
             )}
           </div>
