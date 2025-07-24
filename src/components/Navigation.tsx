@@ -77,16 +77,21 @@ const Navigation = ({ activeSection, onSectionChange }: NavigationProps) => {
                     ? 'text-primary-foreground'
                     : 'text-muted-foreground hover:text-foreground'
                 }`}
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
                 {activeSection === section.id && (
                   <motion.div
-                    layoutId="activeTab"
-                    className="absolute inset-0 bg-primary rounded-md"
+                    layoutId="navigationHighlight"
+                    className="absolute inset-0 bg-primary rounded-md shadow-sm"
                     initial={false}
-                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                    transition={{ 
+                      type: "spring", 
+                      stiffness: 500, 
+                      damping: 35,
+                      mass: 0.8
+                    }}
                   />
                 )}
                 <span className="relative z-10">{section.label}</span>
