@@ -59,198 +59,81 @@ const ResumeTailor = () => {
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-8 min-h-[70vh]">
-          {/* Left Panel - Resume Upload & Selection */}
+        <div className="max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            {/* Resume Upload Section */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="space-y-4"
+            >
+              <h3 className="text-lg font-medium text-foreground">Upload Resume</h3>
+              <div className="border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-primary/50 transition-colors">
+                <Upload className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+                <p className="text-muted-foreground mb-3 text-sm">
+                  Drag and drop your resume here, or click to browse
+                </p>
+                <Button variant="outline" size="sm">
+                  <Upload className="w-4 h-4 mr-2" />
+                  Choose File
+                </Button>
+              </div>
+              
+              {/* Resume Selection Dropdown */}
+              <div className="mt-4">
+                <Select>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Or select from saved resumes" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="resume1">Software Engineer Resume</SelectItem>
+                    <SelectItem value="resume2">Frontend Developer Resume</SelectItem>
+                    <SelectItem value="resume3">Full Stack Resume</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </motion.div>
+
+            {/* Job Description Section */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="space-y-4"
+            >
+              <h3 className="text-lg font-medium text-foreground">Job Description</h3>
+              <Textarea
+                placeholder="Paste the job description here..."
+                className="min-h-[180px] resize-none"
+              />
+              <div className="flex items-center space-x-2">
+                <Button variant="outline" size="sm">
+                  <Upload className="w-4 h-4 mr-2" />
+                  Upload JD PDF
+                </Button>
+                <span className="text-sm text-muted-foreground">Or upload as PDF</span>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Tailor Button */}
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="space-y-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="text-center mb-12"
           >
-            {/* Resume Upload & Dropdown */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="w-5 h-5" />
-                  Resume Selection
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  {/* Upload Resume */}
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Upload New Resume</label>
-                    <motion.div 
-                      className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center cursor-pointer hover:border-primary/50 transition-all duration-200"
-                      onClick={() => setResumeUploaded(true)}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                      <p className="text-sm font-medium mb-1">Upload Resume</p>
-                      <p className="text-xs text-muted-foreground">PDF, DOC, DOCX</p>
-                    </motion.div>
-                  </div>
-                  
-                  {/* Select Existing Resume */}
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Or Select Existing</label>
-                    <Select value={selectedResume} onValueChange={setSelectedResume}>
-                      <SelectTrigger className="h-[120px] flex flex-col items-start justify-start pt-4">
-                        <SelectValue placeholder="Choose saved resume..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {savedResumes.map((resume) => (
-                          <SelectItem key={resume} value={resume}>
-                            {resume}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Resume Preview */}
-            {(resumeUploaded || selectedResume) && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-              >
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Resume Preview</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="bg-muted/50 rounded-lg p-4 max-h-80 overflow-y-auto">
-                      <div className="bg-background rounded shadow-sm p-4">
-                        <h3 className="text-lg font-bold mb-1">Sarah Johnson</h3>
-                        <p className="text-muted-foreground mb-3">Frontend Developer</p>
-                        
-                        <div className="space-y-3 text-sm">
-                          <div>
-                            <h4 className="font-semibold mb-1">Experience</h4>
-                            <div>
-                              <p className="font-medium">Software Engineer - TechCorp</p>
-                              <p className="text-muted-foreground text-xs">2022 - Present</p>
-                            </div>
-                          </div>
-                          
-                          <div>
-                            <h4 className="font-semibold mb-1">Skills</h4>
-                            <div className="flex flex-wrap gap-1">
-                              {['React', 'TypeScript', 'Node.js'].map((skill) => (
-                                <Badge key={skill} variant="secondary" className="text-xs">{skill}</Badge>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                        
-                        {isTailored && (
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="mt-3 text-center"
-                          >
-                            <Badge className="bg-success text-success-foreground">
-                              <Sparkles className="w-3 h-3 mr-1" />
-                              AI Enhanced
-                            </Badge>
-                          </motion.div>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            )}
-          </motion.div>
-
-          {/* Right Panel - Job Description */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            <Card className="h-full">
-              <CardHeader>
-                <CardTitle>Job Description</CardTitle>
-              </CardHeader>
-              <CardContent className="h-[calc(100%-5rem)] space-y-4">
-                {/* Text Input */}
-                <div>
-                  <label className="text-sm font-medium mb-2 block">Paste Job Description</label>
-                  <Textarea
-                    placeholder="Paste the job description here..."
-                    value={jobDescText}
-                    onChange={(e) => {
-                      setJobDescText(e.target.value);
-                      setJobDescUploaded(e.target.value.length > 0);
-                    }}
-                    className="min-h-[200px] resize-none"
-                  />
-                </div>
-                
-                {/* Upload Button */}
-                <div className="text-center">
-                  <p className="text-sm text-muted-foreground mb-2">or</p>
-                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => setJobDescUploaded(true)}
-                      className="w-full"
-                    >
-                      <Upload className="w-4 h-4 mr-2" />
-                      Upload JD PDF
-                    </Button>
-                  </motion.div>
-                </div>
-
-                {/* Job Description Preview */}
-                {jobDescUploaded && jobDescText && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="bg-muted/50 rounded p-3 text-sm max-h-40 overflow-y-auto"
-                  >
-                    <h4 className="font-semibold mb-2">Preview:</h4>
-                    <p className="text-muted-foreground">{jobDescText.substring(0, 200)}...</p>
-                  </motion.div>
-                )}
-
-                {/* Action Button */}
-                <div className="mt-auto pt-4">
-                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                    <Button 
-                      onClick={handleTailorResume}
-                      disabled={!(resumeUploaded || selectedResume) || !jobDescUploaded || isTailoring}
-                      className="w-full"
-                      size="lg"
-                    >
-                      {isTailoring ? (
-                        <>
-                          <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary-foreground border-t-transparent mr-2" />
-                          Analyzing...
-                        </>
-                      ) : (
-                        <>
-                          <Target className="w-4 h-4 mr-2" />
-                          Tailor Resume
-                        </>
-                      )}
-                    </Button>
-                  </motion.div>
-                </div>
-              </CardContent>
-            </Card>
+            <Button size="lg" className="px-12">
+              <Target className="w-5 h-5 mr-2" />
+              Tailor Resume
+            </Button>
           </motion.div>
         </div>
 
+
         {/* Insights Section - Below the inputs */}
-        {isTailored && (
+        {(resumeUploaded || selectedResume) && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

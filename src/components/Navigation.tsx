@@ -27,7 +27,10 @@ const Navigation = ({ activeSection, onSectionChange }: NavigationProps) => {
     } else if (onSectionChange) {
       const element = document.getElementById(section.id);
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+        element.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start'
+        });
       }
       onSectionChange(section.id);
     }
@@ -46,8 +49,9 @@ const Navigation = ({ activeSection, onSectionChange }: NavigationProps) => {
           <div className="flex items-center space-x-2">
             <motion.div 
               className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center"
-              whileHover={{ scale: 1.1 }}
+              whileHover={{ scale: 1.1, rotate: 10 }}
               whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
               <span className="text-primary-foreground font-bold text-sm">H</span>
             </motion.div>
@@ -56,13 +60,14 @@ const Navigation = ({ activeSection, onSectionChange }: NavigationProps) => {
               onClick={() => navigate('/')}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
               Hyrd
             </motion.span>
           </div>
           
-          {/* Navigation - Center */}
-          <div className="flex space-x-1 bg-muted p-1 rounded-lg">
+          {/* Navigation - Absolute Center */}
+          <div className="absolute left-1/2 transform -translate-x-1/2 flex space-x-1 bg-muted p-1 rounded-lg">
             {sections.map((section) => (
               <motion.button
                 key={section.id}
@@ -72,8 +77,9 @@ const Navigation = ({ activeSection, onSectionChange }: NavigationProps) => {
                     ? 'text-primary-foreground'
                     : 'text-muted-foreground hover:text-foreground'
                 }`}
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
                 {activeSection === section.id && (
                   <motion.div

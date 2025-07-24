@@ -11,6 +11,7 @@ const Footer = () => {
           transition={{ duration: 0.6 }}
           className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0"
         >
+          {/* Logo - Far Left */}
           <div className="flex items-center space-x-2">
             <div className="w-6 h-6 bg-primary rounded flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-xs">H</span>
@@ -18,6 +19,10 @@ const Footer = () => {
             <span className="font-semibold">Hyrd</span>
           </div>
           
+          {/* Center - Empty for spacing */}
+          <div className="hidden md:block"></div>
+          
+          {/* Links - Far Right */}
           <div className="flex items-center space-x-6 text-sm">
             <a 
               href="mailto:feedback@hyrd.app" 
@@ -34,7 +39,6 @@ const Footer = () => {
               Report a Bug
             </a>
           </div>
-          
         </motion.div>
       </div>
     </footer>

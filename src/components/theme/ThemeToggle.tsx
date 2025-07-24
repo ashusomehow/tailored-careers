@@ -8,10 +8,10 @@ export function ThemeToggle() {
 
   return (
     <Button
-      variant="ghost"
+      variant="outline"
       size="sm"
       onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-      className="w-9 h-9 rounded-md"
+      className="w-9 h-9 rounded-md border-border hover:bg-accent"
     >
       <motion.div
         initial={false}
