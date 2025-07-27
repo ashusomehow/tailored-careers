@@ -298,18 +298,16 @@ const MasterPortfolio = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
         >
-          <Card className="bg-primary-light/30 border-primary/20">
-            <CardContent className="p-6 text-center">
-              <h3 className="text-lg font-semibold mb-2">Create an Account to Save Your Progress</h3>
-              <p className="text-muted-foreground mb-4">
-                Sign up to save your job applications, tailored resumes, and track your job search progress.
-              </p>
-              <div className="flex gap-4 justify-center">
-                <Button>Create Account</Button>
-                <Button variant="outline">Sign In</Button>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="border-2 border-dashed border-border rounded-xl p-6 text-center">
+            <h3 className="text-lg font-semibold mb-2">Create an Account to Save Your Progress</h3>
+            <p className="text-muted-foreground mb-4">
+              Sign up to save your job applications, tailored resumes, and track your job search progress.
+            </p>
+            <div className="flex gap-4 justify-center">
+              <Button>Create Account</Button>
+              <Button variant="outline">Sign In</Button>
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>

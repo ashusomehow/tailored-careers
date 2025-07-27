@@ -29,7 +29,7 @@ const Navigation = ({ activeSection, onSectionChange }: NavigationProps) => {
   const sections = [
     { id: 'tailorer', label: 'Resume Tailor', route: '/resume-tailorer' },
     { id: 'builder', label: 'Resume Builder', route: '/resume-builder' },
-    { id: 'tracker', label: 'Job Application Tracker', route: '/application-tracker' },
+    { id: 'tracker', label: 'Application Tracker', route: '/application-tracker' },
   ];
 
   const handleNavigation = (section: any) => {
