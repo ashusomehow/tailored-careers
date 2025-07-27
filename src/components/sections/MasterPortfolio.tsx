@@ -1,17 +1,121 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, Calendar, Building2, MapPin, Filter, Search, Clock, CheckCircle, XCircle, Circle } from 'lucide-react';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, useDroppable } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
+interface Job {
+  id: number;
+  title: string;
+  company: string;
+  location: string;
+  status: string;
+  deadline: string;
+  applied: string;
+  tags: string[];
+  matchScore: number;
+  notes: string;
+  resumeVersion: string;
+  tailoringInsights: string[];
+}
+
+const DroppableColumn = ({ column, children }: { column: any; children: React.ReactNode }) => {
+  const { setNodeRef, isOver } = useDroppable({
+    id: column.id,
+  });
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={`rounded-lg p-4 min-h-[500px] transition-colors ${column.color} ${
+        isOver ? 'ring-2 ring-primary/50' : ''
+      }`}
+    >
+      {children}
+    </div>
+  );
+};
+
+const JobCard = ({ job }: { job: Job }) => {
+  
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({ id: job.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  const getTagColor = (tag: string) => {
+    switch (tag) {
+      case 'dream':
+        return 'bg-primary/10 text-primary border-primary/20';
+      case 'backup':
+        return 'bg-muted/10 text-muted-foreground border-muted/20';
+      case 'urgent':
+        return 'bg-destructive/10 text-destructive border-destructive/20';
+      case 'remote':
+        return 'bg-success/10 text-success border-success/20';
+      case 'hybrid':
+        return 'bg-warning/10 text-warning border-warning/20';
+      default:
+        return 'bg-secondary';
+    }
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className="bg-card border rounded-lg p-3 cursor-grab active:cursor-grabbing shadow-sm hover:shadow-md transition-all mb-3"
+    >
+      <div className="flex justify-between items-start mb-2">
+        <div className="flex-1">
+          <h4 className="font-medium text-sm leading-tight mb-1">{job.title}</h4>
+          <div className="flex items-center text-xs text-muted-foreground mb-2">
+            <Building2 className="w-3 h-3 mr-1" />
+            {job.company}
+          </div>
+        </div>
+        <div className="text-right ml-2">
+          <div className="text-lg font-bold text-primary">{job.matchScore}%</div>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-1 mb-2 flex-wrap">
+        {job.tags.map((tag) => (
+          <Badge key={tag} className={`${getTagColor(tag)} text-xs`} variant="outline">
+            {tag}
+          </Badge>
+        ))}
+      </div>
+
+      <div className="flex items-center text-xs text-muted-foreground">
+        <Calendar className="w-3 h-3 mr-1" />
+        Due {new Date(job.deadline).toLocaleDateString()}
+      </div>
+    </div>
+  );
+};
+
 const MasterPortfolio = () => {
-  const [selectedJob, setSelectedJob] = useState<number | null>(null);
   const [sortBy, setSortBy] = useState('deadline');
   
-  const mockJobs = [
+  const [jobs, setJobs] = useState<Job[]>([
     {
       id: 1,
       title: 'Senior Frontend Developer',
@@ -69,7 +173,7 @@ const MasterPortfolio = () => {
       title: 'React Developer',
       company: 'MegaCorp',
       location: 'Seattle, WA',
-      status: 'offer',
+      status: 'accepted',
       deadline: '2024-02-20',
       applied: '2024-01-30',
       tags: ['corporate', 'stable'],
@@ -80,53 +184,88 @@ const MasterPortfolio = () => {
         'Emphasized enterprise-level experience',
         'Added compliance and security knowledge'
       ]
+    },
+    {
+      id: 5,
+      title: 'UI/UX Developer',
+      company: 'DesignCorp',
+      location: 'Los Angeles, CA',
+      status: 'new',
+      deadline: '2024-02-25',
+      applied: '2024-02-01',
+      tags: ['design', 'remote'],
+      matchScore: 85,
+      notes: 'Interesting design-focused role with good growth potential.',
+      resumeVersion: 'DesignCorp_Creative_v1.pdf',
+      tailoringInsights: [
+        'Highlighted design system experience',
+        'Added Figma and prototyping skills'
+      ]
+    },
+    {
+      id: 6,
+      title: 'Backend Engineer',
+      company: 'DataTech',
+      location: 'Chicago, IL',
+      status: 'in-process',
+      deadline: '2024-02-18',
+      applied: '2024-01-22',
+      tags: ['backend', 'data'],
+      matchScore: 75,
+      notes: 'Data-heavy role, currently in technical review stage.',
+      resumeVersion: 'DataTech_Backend_v1.pdf',
+      tailoringInsights: [
+        'Emphasized database optimization',
+        'Added cloud infrastructure experience'
+      ]
     }
+  ]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const columns = [
+    { id: 'new', title: 'New', color: 'bg-slate-100 dark:bg-slate-800' },
+    { id: 'applied', title: 'Applied', color: 'bg-blue-100 dark:bg-blue-900/20' },
+    { id: 'in-process', title: 'In Process', color: 'bg-yellow-100 dark:bg-yellow-900/20' },
+    { id: 'interview', title: 'Interview', color: 'bg-purple-100 dark:bg-purple-900/20' },
+    { id: 'accepted', title: 'Accepted', color: 'bg-green-100 dark:bg-green-900/20' },
+    { id: 'rejected', title: 'Rejected', color: 'bg-red-100 dark:bg-red-900/20' }
   ];
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'applied':
-        return <Clock className="w-4 h-4 text-warning" />;
-      case 'interview':
-        return <Circle className="w-4 h-4 text-primary" />;
-      case 'rejected':
-        return <XCircle className="w-4 h-4 text-destructive" />;
-      case 'offer':
-        return <CheckCircle className="w-4 h-4 text-success" />;
-      default:
-        return <Circle className="w-4 h-4 text-muted-foreground" />;
-    }
+  const getJobsByStatus = (status: string) => {
+    return jobs.filter(job => job.status === status);
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'applied':
-        return 'bg-warning/10 text-warning border-warning/20';
-      case 'interview':
-        return 'bg-primary/10 text-primary border-primary/20';
-      case 'rejected':
-        return 'bg-destructive/10 text-destructive border-destructive/20';
-      case 'offer':
-        return 'bg-success/10 text-success border-success/20';
-      default:
-        return 'bg-muted/10 text-muted-foreground border-muted/20';
-    }
-  };
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event;
 
-  const getTagColor = (tag: string) => {
-    switch (tag) {
-      case 'dream':
-        return 'bg-primary/10 text-primary border-primary/20';
-      case 'backup':
-        return 'bg-muted/10 text-muted-foreground border-muted/20';
-      case 'urgent':
-        return 'bg-destructive/10 text-destructive border-destructive/20';
-      case 'remote':
-        return 'bg-success/10 text-success border-success/20';
-      case 'hybrid':
-        return 'bg-warning/10 text-warning border-warning/20';
-      default:
-        return 'bg-secondary';
+    if (!over) return;
+
+    const activeJob = jobs.find(job => job.id === active.id);
+    if (!activeJob) return;
+
+    // Check if dropping on a column
+    const targetColumn = columns.find(col => col.id === over.id);
+    if (targetColumn) {
+      setJobs(jobs.map(job => 
+        job.id === active.id 
+          ? { ...job, status: targetColumn.id }
+          : job
+      ));
+      return;
+    }
+
+    // Handle reordering within the same column
+    const overJob = jobs.find(job => job.id === over.id);
+    if (overJob && activeJob.status === overJob.status) {
+      const oldIndex = jobs.findIndex(job => job.id === active.id);
+      const newIndex = jobs.findIndex(job => job.id === over.id);
+      setJobs(arrayMove(jobs, oldIndex, newIndex));
     }
   };
 
@@ -140,7 +279,7 @@ const MasterPortfolio = () => {
           className="text-center mb-12"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            Job Application{' '}
+            Application{' '}
             <span className="text-primary">Tracker</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -184,113 +323,48 @@ const MasterPortfolio = () => {
           </Button>
         </motion.div>
 
-        {/* Job Cards Grid */}
-        <div className="grid lg:grid-cols-2 gap-6 mb-8">
-          {mockJobs.map((job, index) => (
-            <motion.div
-              key={job.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-            >
-              <Card 
-                className={`cursor-pointer transition-all hover:shadow-lg ${
-                  selectedJob === job.id ? 'ring-2 ring-primary shadow-lg' : ''
-                }`}
-                onClick={() => setSelectedJob(selectedJob === job.id ? null : job.id)}
-              >
-                <CardHeader className="pb-4">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle className="text-lg mb-1">{job.title}</CardTitle>
-                      <div className="flex items-center text-muted-foreground text-sm mb-2">
-                        <Building2 className="w-4 h-4 mr-1" />
-                        {job.company}
-                        <MapPin className="w-4 h-4 ml-3 mr-1" />
-                        {job.location}
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-primary mb-1">{job.matchScore}%</div>
-                      <div className="text-xs text-muted-foreground">match</div>
-                    </div>
+        {/* Kanban Board */}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8"
+          >
+            {columns.map((column) => (
+              <DroppableColumn key={column.id} column={column}>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold text-sm">{column.title}</h3>
+                  <Badge variant="secondary" className="text-xs">
+                    {getJobsByStatus(column.id).length}
+                  </Badge>
+                </div>
+                
+                <SortableContext
+                  items={getJobsByStatus(column.id).map(job => job.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="space-y-3">
+                    {getJobsByStatus(column.id).map((job) => (
+                      <JobCard key={job.id} job={job} />
+                    ))}
                   </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Badge className={getStatusColor(job.status)}>
-                        {getStatusIcon(job.status)}
-                        <span className="ml-1 capitalize">{job.status}</span>
-                      </Badge>
-                      {job.tags.map((tag) => (
-                        <Badge key={tag} className={getTagColor(tag)} variant="outline">
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                    
-                    <div className="flex items-center text-xs text-muted-foreground">
-                      <Calendar className="w-3 h-3 mr-1" />
-                      Due {new Date(job.deadline).toLocaleDateString()}
-                    </div>
+                </SortableContext>
+                
+                {/* Drop zone for empty columns */}
+                {getJobsByStatus(column.id).length === 0 && (
+                  <div className="mt-4 p-4 border-2 border-dashed border-muted-foreground/20 rounded-lg text-center text-sm text-muted-foreground">
+                    Drop jobs here
                   </div>
-                </CardHeader>
-
-                {/* Expanded Content */}
-                {selectedJob === job.id && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <CardContent className="pt-0 border-t">
-                      <div className="space-y-4 mt-4">
-                        {/* Application Details */}
-                        <div className="grid md:grid-cols-2 gap-4 text-sm">
-                          <div>
-                            <p className="font-medium mb-1">Applied Date</p>
-                            <p className="text-muted-foreground">{new Date(job.applied).toLocaleDateString()}</p>
-                          </div>
-                          <div>
-                            <p className="font-medium mb-1">Resume Version</p>
-                            <p className="text-muted-foreground">{job.resumeVersion}</p>
-                          </div>
-                        </div>
-
-                        {/* Notes */}
-                        <div>
-                          <p className="font-medium mb-1">Notes</p>
-                          <p className="text-sm text-muted-foreground">{job.notes}</p>
-                        </div>
-
-                        {/* Tailoring Insights */}
-                        <div>
-                          <p className="font-medium mb-2">Tailoring Insights</p>
-                          <div className="space-y-1">
-                            {job.tailoringInsights.map((insight, idx) => (
-                              <div key={idx} className="flex items-start gap-2 text-sm">
-                                <div className="w-1 h-1 rounded-full bg-primary mt-2 shrink-0" />
-                                <span className="text-muted-foreground">{insight}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Actions */}
-                        <div className="flex gap-2 pt-2">
-                          <Button size="sm" variant="outline">Edit Details</Button>
-                          <Button size="sm" variant="outline">View Resume</Button>
-                          <Button size="sm" variant="outline">Update Status</Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </motion.div>
                 )}
-              </Card>
-            </motion.div>
-          ))}
-        </div>
+              </DroppableColumn>
+            ))}
+          </motion.div>
+        </DndContext>
 
         {/* Save Notice */}
         <motion.div
