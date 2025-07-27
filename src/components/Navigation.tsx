@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
 
 interface NavigationProps {
@@ -14,6 +14,17 @@ interface NavigationProps {
 const Navigation = ({ activeSection, onSectionChange }: NavigationProps) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Determine active section based on current route
+  const getCurrentSection = () => {
+    if (location.pathname === '/resume-tailorer') return 'tailorer';
+    if (location.pathname === '/resume-builder') return 'builder';
+    if (location.pathname === '/application-tracker') return 'tracker';
+    return activeSection;
+  };
+  
+  const currentSection = getCurrentSection();
   
   const sections = [
     { id: 'tailorer', label: 'Resume Tailor', route: '/resume-tailorer' },
@@ -73,24 +84,24 @@ const Navigation = ({ activeSection, onSectionChange }: NavigationProps) => {
                 key={section.id}
                 onClick={() => handleNavigation(section)}
                 className={`relative px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
-                  activeSection === section.id
-                    ? 'text-primary-foreground'
+                  currentSection === section.id
+                    ? 'text-white'
                     : 'text-muted-foreground hover:text-foreground'
                 }`}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
-                {activeSection === section.id && (
+                {currentSection === section.id && (
                   <motion.div
                     layoutId="navigationHighlight"
-                    className="absolute inset-0 bg-primary rounded-md shadow-sm"
+                    className="absolute inset-0 bg-purple-500 rounded-md shadow-lg"
                     initial={false}
                     transition={{ 
                       type: "spring", 
-                      stiffness: 500, 
-                      damping: 35,
-                      mass: 0.8
+                      stiffness: 300, 
+                      damping: 25,
+                      mass: 0.6
                     }}
                   />
                 )}
