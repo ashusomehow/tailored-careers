@@ -107,12 +107,11 @@ const ResumeTailor = () => {
                 placeholder="Paste the job description here..."
                 className="min-h-[180px] resize-none"
               />
-              <div className="flex items-center space-x-2">
-                <Button variant="outline" size="sm">
+              <div>
+                <Button variant="outline" className="w-full">
                   <Upload className="w-4 h-4 mr-2" />
                   Upload JD PDF
                 </Button>
-                <span className="text-sm text-muted-foreground">Or upload as PDF</span>
               </div>
             </motion.div>
           </div>
