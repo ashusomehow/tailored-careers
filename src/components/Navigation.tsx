@@ -95,13 +95,14 @@ const Navigation = ({ activeSection, onSectionChange }: NavigationProps) => {
                 {currentSection === section.id && (
                   <motion.div
                     layoutId="navigationHighlight"
-                    className="absolute inset-0 bg-purple-500 rounded-md shadow-lg"
+                    className="absolute inset-0 bg-primary rounded-md shadow-lg border border-primary/20"
                     initial={false}
                     transition={{ 
                       type: "spring", 
-                      stiffness: 300, 
-                      damping: 25,
-                      mass: 0.6
+                      stiffness: 400, 
+                      damping: 20,
+                      mass: 0.4,
+                      bounce: 0.6
                     }}
                   />
                 )}
