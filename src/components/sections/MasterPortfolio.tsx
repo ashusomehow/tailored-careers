@@ -34,11 +34,21 @@ const DroppableColumn = ({ column, children }: { column: any; children: React.Re
   return (
     <div
       ref={setNodeRef}
-      className={`rounded-lg p-4 min-h-[500px] transition-colors ${column.color} ${
+      className={`rounded-lg p-3 h-[600px] transition-colors ${column.color} ${
         isOver ? 'ring-2 ring-primary/50' : ''
       }`}
     >
-      {children}
+      <div className="h-full flex flex-col">
+        <div className="flex items-center justify-between mb-3 flex-shrink-0">
+          <h3 className="font-semibold text-sm">{column.title}</h3>
+          <Badge variant="secondary" className="text-xs">
+            {/* Badge content will be added in the main component */}
+          </Badge>
+        </div>
+        <div className="flex-1 overflow-y-auto">
+          {children}
+        </div>
+      </div>
     </div>
   );
 };
@@ -81,32 +91,37 @@ const JobCard = ({ job }: { job: Job }) => {
       style={style}
       {...attributes}
       {...listeners}
-      className="bg-card border rounded-lg p-3 cursor-grab active:cursor-grabbing shadow-sm hover:shadow-md transition-all mb-3"
+      className="bg-card border rounded-lg p-2 cursor-grab active:cursor-grabbing shadow-sm hover:shadow-md transition-all mb-2 h-[120px] flex flex-col"
     >
-      <div className="flex justify-between items-start mb-2">
-        <div className="flex-1">
-          <h4 className="font-medium text-sm leading-tight mb-1">{job.title}</h4>
-          <div className="flex items-center text-xs text-muted-foreground mb-2">
-            <Building2 className="w-3 h-3 mr-1" />
-            {job.company}
+      <div className="flex justify-between items-start mb-1 flex-shrink-0">
+        <div className="flex-1 min-w-0">
+          <h4 className="font-medium text-xs leading-tight mb-1 truncate">{job.title}</h4>
+          <div className="flex items-center text-xs text-muted-foreground">
+            <Building2 className="w-3 h-3 mr-1 flex-shrink-0" />
+            <span className="truncate">{job.company}</span>
           </div>
         </div>
-        <div className="text-right ml-2">
-          <div className="text-lg font-bold text-primary">{job.matchScore}%</div>
+        <div className="text-right ml-2 flex-shrink-0">
+          <div className="text-sm font-bold text-primary">{job.matchScore}%</div>
         </div>
       </div>
 
-      <div className="flex items-center gap-1 mb-2 flex-wrap">
-        {job.tags.map((tag) => (
-          <Badge key={tag} className={`${getTagColor(tag)} text-xs`} variant="outline">
+      <div className="flex items-center gap-1 mb-1 flex-wrap flex-shrink-0">
+        {job.tags.slice(0, 2).map((tag) => (
+          <Badge key={tag} className={`${getTagColor(tag)} text-xs px-1 py-0`} variant="outline">
             {tag}
           </Badge>
         ))}
+        {job.tags.length > 2 && (
+          <Badge className="text-xs px-1 py-0" variant="outline">
+            +{job.tags.length - 2}
+          </Badge>
+        )}
       </div>
 
-      <div className="flex items-center text-xs text-muted-foreground">
+      <div className="flex items-center text-xs text-muted-foreground mt-auto">
         <Calendar className="w-3 h-3 mr-1" />
-        Due {new Date(job.deadline).toLocaleDateString()}
+        <span className="truncate">Due {new Date(job.deadline).toLocaleDateString()}</span>
       </div>
     </div>
   );
@@ -336,32 +351,33 @@ const MasterPortfolio = () => {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8"
           >
             {columns.map((column) => (
-              <DroppableColumn key={column.id} column={column}>
-                <div className="flex items-center justify-between mb-4">
+              <div key={column.id} className="flex flex-col">
+                <div className="flex items-center justify-between mb-3 px-3">
                   <h3 className="font-semibold text-sm">{column.title}</h3>
                   <Badge variant="secondary" className="text-xs">
                     {getJobsByStatus(column.id).length}
                   </Badge>
                 </div>
-                
-                <SortableContext
-                  items={getJobsByStatus(column.id).map(job => job.id)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <div className="space-y-3">
-                    {getJobsByStatus(column.id).map((job) => (
-                      <JobCard key={job.id} job={job} />
-                    ))}
-                  </div>
-                </SortableContext>
-                
-                {/* Drop zone for empty columns */}
-                {getJobsByStatus(column.id).length === 0 && (
-                  <div className="mt-4 p-4 border-2 border-dashed border-muted-foreground/20 rounded-lg text-center text-sm text-muted-foreground">
-                    Drop jobs here
-                  </div>
-                )}
-              </DroppableColumn>
+                <DroppableColumn column={column}>
+                  <SortableContext
+                    items={getJobsByStatus(column.id).map(job => job.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <div className="space-y-2">
+                      {getJobsByStatus(column.id).map((job) => (
+                        <JobCard key={job.id} job={job} />
+                      ))}
+                    </div>
+                  </SortableContext>
+                  
+                  {/* Drop zone for empty columns */}
+                  {getJobsByStatus(column.id).length === 0 && (
+                    <div className="mt-4 p-4 border-2 border-dashed border-muted-foreground/20 rounded-lg text-center text-sm text-muted-foreground">
+                      Drop jobs here
+                    </div>
+                  )}
+                </DroppableColumn>
+              </div>
             ))}
           </motion.div>
         </DndContext>
