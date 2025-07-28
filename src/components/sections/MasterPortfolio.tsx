@@ -34,20 +34,12 @@ const DroppableColumn = ({ column, children }: { column: any; children: React.Re
   return (
     <div
       ref={setNodeRef}
-      className={`rounded-lg p-3 h-[600px] transition-colors ${column.color} ${
+      className={`rounded-lg p-3 min-h-[400px] transition-colors ${column.color} ${
         isOver ? 'ring-2 ring-primary/50' : ''
       }`}
     >
-      <div className="h-full flex flex-col">
-        <div className="flex items-center justify-between mb-3 flex-shrink-0">
-          <h3 className="font-semibold text-sm">{column.title}</h3>
-          <Badge variant="secondary" className="text-xs">
-            {/* Badge content will be added in the main component */}
-          </Badge>
-        </div>
-        <div className="flex-1 overflow-y-auto">
-          {children}
-        </div>
+      <div className="overflow-y-auto max-h-[600px]">
+        {children}
       </div>
     </div>
   );
@@ -244,12 +236,12 @@ const MasterPortfolio = () => {
   );
 
   const columns = [
-    { id: 'new', title: 'New', color: 'bg-slate-100 dark:bg-slate-800' },
-    { id: 'applied', title: 'Applied', color: 'bg-blue-100 dark:bg-blue-900/20' },
-    { id: 'in-process', title: 'In Process', color: 'bg-yellow-100 dark:bg-yellow-900/20' },
-    { id: 'interview', title: 'Interview', color: 'bg-purple-100 dark:bg-purple-900/20' },
-    { id: 'accepted', title: 'Accepted', color: 'bg-green-100 dark:bg-green-900/20' },
-    { id: 'rejected', title: 'Rejected', color: 'bg-red-100 dark:bg-red-900/20' }
+    { id: 'new', title: 'New', color: 'bg-muted/30 border border-border' },
+    { id: 'applied', title: 'Applied', color: 'bg-primary/5 border border-primary/20' },
+    { id: 'in-process', title: 'In Process', color: 'bg-secondary/30 border border-secondary' },
+    { id: 'interview', title: 'Interview', color: 'bg-accent/20 border border-accent' },
+    { id: 'accepted', title: 'Accepted', color: 'bg-success/10 border border-success/30' },
+    { id: 'rejected', title: 'Rejected', color: 'bg-destructive/5 border border-destructive/20' }
   ];
 
   const getJobsByStatus = (status: string) => {
@@ -352,7 +344,7 @@ const MasterPortfolio = () => {
           >
             {columns.map((column) => (
               <div key={column.id} className="flex flex-col">
-                <div className="flex items-center justify-between mb-3 px-3">
+                <div className="flex items-center justify-between mb-3">
                   <h3 className="font-semibold text-sm">{column.title}</h3>
                   <Badge variant="secondary" className="text-xs">
                     {getJobsByStatus(column.id).length}
